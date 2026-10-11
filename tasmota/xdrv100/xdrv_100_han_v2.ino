@@ -10,7 +10,7 @@
 #define XDRV_100 100
 
 #undef HAN_VERSION_T
-#define HAN_VERSION_T "7.318995"
+#define HAN_VERSION_T "7.321"
 
 #ifdef EASYHAN_TCP
 #undef HAN_VERSION
@@ -829,7 +829,12 @@ void HanDoWork(void) {
       hLPid[6] = node.getResponseBuffer(2) & 0xFF;
       hLPid[7] = node.getResponseBuffer(3) >> 8;
       hLPid[8] = node.getResponseBuffer(3) & 0xFF;
-
+      hLPid[9] = node.getResponseBuffer(4) >> 8;
+      hLPid[10] = node.getResponseBuffer(4) & 0xFF;
+      hLPid[11] = node.getResponseBuffer(5) >> 8;
+      hLPid[12] = node.getResponseBuffer(5) & 0xFF;
+      hLPid[13] = node.getResponseBuffer(6) >> 8;
+      hLPid[14] = node.getResponseBuffer(6) & 0xFF;
       hanBlink();
       hanDelay = hanDelayWait;
       hanIndex++;
@@ -1184,12 +1189,13 @@ void HanDoWork(void) {
         hLPval[3] = node.getResponseBuffer(7);
         hLPval[4] = node.getResponseBuffer(8);
         hLPval[5] = node.getResponseBuffer(9);
-
-        if (hanEB == 3) {
-          hLPval[6] = node.getResponseBuffer(10);
-          hLPval[7] = node.getResponseBuffer(11);
-          hLPval[8] = node.getResponseBuffer(12);
-        }
+        hLPval[6] = node.getResponseBuffer(10);
+        hLPval[7] = node.getResponseBuffer(11);
+        hLPval[8] = node.getResponseBuffer(12);
+        hLPval[9] = node.getResponseBuffer(13);
+        hLPval[10] = node.getResponseBuffer(14);
+        hLPval[11] = node.getResponseBuffer(15);
+        hLPval[12] = node.getResponseBuffer(16);
       }
 
       //
@@ -1623,6 +1629,12 @@ void HanJson(bool json) {
         case 24:
           sprintf(_name, "%s", "Export Inc (Wh) ~id10");
           break;
+        case 28:
+        case 32:
+        case 36:
+        case 40:
+          sprintf(_name, "%s", "Reactive");
+          break;
         case 45:
         case 46:
         case 47:
@@ -1630,7 +1642,7 @@ void HanJson(bool json) {
           sprintf(_name, "%s", "Voltage (V)");
           break;
         default:
-          sprintf(_name, "%s", "???");
+          sprintf(_name, "%s", "?");
       }
 
       if ((hLPid[i] > 2) & (hLPid[i] < 99)) {
@@ -1653,7 +1665,7 @@ void HanJson(bool json) {
             hLPid[10], hLPid[11], hLPid[12], hLPid[13],
             hLPid[14]);
 
-    WSContentSend_PD("{s}%s {m} {e}", tmpLPid);
+    WSContentSend_PD("{s}IDs: %s {m} {e}", tmpLPid);
 
     WSContentSend_PD("{s}<br>{m} {e}");
 
@@ -2058,14 +2070,14 @@ void CmdHanProfile(void) {
     }
     // *****
   } else {
-    sprintf(resX,
-            "%04d,Error,Limit,%04d,%04d,"
-            "ID,%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d",
-            getLP, hLPX[0], hLPX[1], hLPid[1], hLPid[2],
-            hLPid[3], hLPid[4], hLPid[5], hLPid[6],
-            hLPid[7], hLPid[8]), hLPid[9],
-            hLPid[10], hLPid[11], hLPid[12], hLPid[13],
-            hLPid[14]);
+    sprintf(
+        resX,
+        "%04d,Error,Limit,%04d,%04d,"
+        "ID,%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d",
+        getLP, hLPX[0], hLPX[1], hLPid[1], hLPid[2],
+        hLPid[3], hLPid[4], hLPid[5], hLPid[6], hLPid[7],
+        hLPid[8], hLPid[9], hLPid[10], hLPid[11],
+        hLPid[12], hLPid[13], hLPid[14]);
   }
 
   hanRead = millis();
