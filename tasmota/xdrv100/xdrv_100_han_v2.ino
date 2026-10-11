@@ -10,7 +10,7 @@
 #define XDRV_100 100
 
 #undef HAN_VERSION_T
-#define HAN_VERSION_T "7.318991"
+#define HAN_VERSION_T "7.318992"
 
 #ifdef EASYHAN_TCP
 #undef HAN_VERSION
@@ -305,15 +305,7 @@ void setDelayError(uint8_t hanRes) {
   //
 }
 
-// ###
-
-void HanDiscovery() {
-  //
-  char _topic[100];
-  char _msg[768];
-
-  AddLog(LOG_LEVEL_INFO, PSTR("HAN: Discovery..."));
-
+voin HanNick() {
   char _file[20];
   char _settings[1];
 
@@ -327,6 +319,19 @@ void HanDiscovery() {
   } else {
     hNick = hanEB;
   }
+}
+
+// ###
+
+void HanDiscovery() {
+  //
+  char _topic[100];
+  char _msg[768];
+
+  AddLog(LOG_LEVEL_INFO,
+         PSTR("HAN: Firmware Discovery..."));
+
+  HanNick();
 
   //
 
@@ -681,6 +686,7 @@ void HanDoWork(void) {
         AddLog(LOG_LEVEL_INFO,
                PSTR("HAN: *** EB3 *** %d / %d ***"),
                testEB, hanDTT);
+        HanNick();
       } else {
         hanEB = 1;
         subType = 3;
@@ -688,6 +694,7 @@ void HanDoWork(void) {
         AddLog(LOG_LEVEL_INFO,
                PSTR("HAN: *** EB1 *** %d / %d ***"),
                testEB, hanDTT);
+        HanNick();
       }
       //
     } else if ((testEB == 0x02) || (testEB == 0x04)) {
@@ -696,6 +703,7 @@ void HanDoWork(void) {
       hanIndex++;
       AddLog(LOG_LEVEL_INFO,
              PSTR("HAN: *** EB1 *** %d ***"), testEB);
+      HanNick();
     } else {
       AddLog(LOG_LEVEL_INFO,
              PSTR("HAN: *** Error *** %d ***"), testEB);
@@ -743,6 +751,7 @@ void HanDoWork(void) {
           subType = 3;
           AddLog(LOG_LEVEL_INFO,
                  PSTR("HAN: *** T Janz Tweak ***"));
+          HanNick();
           break;
         case 6754306:   // T Landis+Gyr S3
         case 6754307:   // T Landis+Gyr S5
@@ -753,6 +762,7 @@ void HanDoWork(void) {
           AddLog(LOG_LEVEL_INFO,
                  PSTR("HAN: *** Force EB%d / %d ***"),
                  hanEB, subType);
+          HanNick();
           break;
       }
 
