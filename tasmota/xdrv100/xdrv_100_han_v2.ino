@@ -10,7 +10,7 @@
 #define XDRV_100 100
 
 #undef HAN_VERSION_T
-#define HAN_VERSION_T "7.318992"
+#define HAN_VERSION_T "7.318995"
 
 #ifdef EASYHAN_TCP
 #undef HAN_VERSION
@@ -113,8 +113,8 @@ char hLP1gmt[5];
 
 uint16_t hLP2 = 0;  // tweaked to 16bits
 
-uint8_t hLPid[9];
-uint32_t hLPval[9];
+uint8_t hLPid[15];
+uint16_t hLPval[15];
 
 uint32_t hLPX[2];
 
@@ -141,7 +141,7 @@ float nsQs = 0;
 
 uint32_t hWtdT = 0;
 
-uint8_t hNick = 0;
+uint8_t hNick = 97;
 int32_t hFreeDS = 0;
 char hDSt[30];
 char hDSm[120];
@@ -305,7 +305,7 @@ void setDelayError(uint8_t hanRes) {
   //
 }
 
-voin HanNick() {
+void HanNick() {
   char _file[20];
   char _settings[1];
 
@@ -565,7 +565,7 @@ void HanDoWork(void) {
     hanIndex = 0;
   }
 
-  if ((hDiscovery) && (_millis > 50000) &&
+  if ((hDiscovery) && (_millis > 60000) &&
       (hanEB != 99)) {
     HanDiscovery();
   }
@@ -756,6 +756,7 @@ void HanDoWork(void) {
         case 6754306:   // T Landis+Gyr S3
         case 6754307:   // T Landis+Gyr S5
         case 11014146:  // T Sagem CX2000-9
+        case 11014147:  // T Sagem T215 ?
         case 16977920:  // T Ziv 5CTD E2F
           hanEB = 3;
           subType = 3;
@@ -1187,6 +1188,7 @@ void HanDoWork(void) {
         if (hanEB == 3) {
           hLPval[6] = node.getResponseBuffer(10);
           hLPval[7] = node.getResponseBuffer(11);
+          hLPval[8] = node.getResponseBuffer(12);
         }
       }
 
@@ -1388,7 +1390,7 @@ void HanJson(bool json) {
 
     // new LP
 
-    for (uint8_t i = 3; i < 9; i++) {
+    for (uint8_t i = 3; i < 15; i++) {
       if ((hLPid[i] > 2) & (hLPid[i] < 99)) {
         ResponseAppend_P(",\"LPid%d\":%d", hLPid[i],
                          hLPval[i]);
@@ -1597,7 +1599,7 @@ void HanJson(bool json) {
 
     // new LP
 
-    for (uint8_t i = 3; i < 9; i++) {
+    for (uint8_t i = 3; i < 15; i++) {
       //
 
       char _name[24];
@@ -1640,11 +1642,18 @@ void HanJson(bool json) {
     //
 
     char tmpLPid[25];
+
     sprintf(tmpLPid, "%d %d %d %d %d %d %d %d", hLPid[1],
             hLPid[2], hLPid[3], hLPid[4], hLPid[5],
             hLPid[6], hLPid[7], hLPid[8]);
 
     WSContentSend_PD("{s}IDs: %s {m} {e}", tmpLPid);
+
+    sprintf(tmpLPid, "%d %d %d %d %d %d", hLPid[9],
+            hLPid[10], hLPid[11], hLPid[12], hLPid[13],
+            hLPid[14]);
+
+    WSContentSend_PD("{s}%s {m} {e}", tmpLPid);
 
     WSContentSend_PD("{s}<br>{m} {e}");
 
@@ -1711,7 +1720,7 @@ void HanJson(bool json) {
         sprintf(_emi, "%s", "T Sagem CX2000-9");
         break;
       case 11014147:
-        sprintf(_emi, "%s", "T Sagem ???");
+        sprintf(_emi, "%s", "T Sagem T215 ?");
         break;
       case 16973825:
         sprintf(_emi, "%s", "M Ziv ???");
@@ -2051,10 +2060,12 @@ void CmdHanProfile(void) {
   } else {
     sprintf(resX,
             "%04d,Error,Limit,%04d,%04d,"
-            "ID,%d-%d-%d-%d-%d-%d-%d-%d",
+            "ID,%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d",
             getLP, hLPX[0], hLPX[1], hLPid[1], hLPid[2],
             hLPid[3], hLPid[4], hLPid[5], hLPid[6],
-            hLPid[7], hLPid[8]);
+            hLPid[7], hLPid[8]), hLPid[9],
+            hLPid[10], hLPid[11], hLPid[12], hLPid[13],
+            hLPid[14]);
   }
 
   hanRead = millis();
