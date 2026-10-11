@@ -10,7 +10,7 @@
 #define XDRV_100 100
 
 #undef HAN_VERSION_T
-#define HAN_VERSION_T "7.317"
+#define HAN_VERSION_T "7.318991"
 
 #ifdef EASYHAN_TCP
 #undef HAN_VERSION
@@ -944,6 +944,7 @@ void HanDoWork(void) {
         hanDelay = hanDelayWait;
         hanIndex++;
         sprintf(hStatus, "OK");
+        freeDS();  // ###
       } else {
         hanERR++;
         setDelayError(hRes);
@@ -959,16 +960,13 @@ void HanDoWork(void) {
         hanBlink();
         hanDelay = hanDelayWait;
         hanIndex++;
+        sprintf(hStatus, "OK");
+        freeDS();  // ###
       } else {
         hanERR++;
         setDelayError(hRes);
       }
     }
-    //
-    if (!hDiscovery) {
-      freeDS();
-    }
-    //
     hanRead = millis();
     hanWork = false;
   }
