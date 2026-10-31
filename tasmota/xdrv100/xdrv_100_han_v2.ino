@@ -10,7 +10,7 @@
 #define XDRV_100 100
 
 #undef HAN_VERSION_T
-#define HAN_VERSION_T "7.321"
+#define HAN_VERSION_T "7.3229901"
 
 #ifdef EASYHAN_TCP
 #undef HAN_VERSION
@@ -1741,13 +1741,16 @@ void HanJson(bool json) {
         sprintf(_emi, "%s", "T Ziv 5CTD E2F");
         break;
       case 18481154:
-        sprintf(_emi, "%s", "M Kaifa MA109P");
+        sprintf(_emi, "%s", "M Kaifa MA109P 54");
         break;
       case 18481155:
-        sprintf(_emi, "%s", "M Kaifa MA109P 2021");
+        sprintf(_emi, "%s", "M Kaifa MA109P 55");
         break;
       case 18481156:
         sprintf(_emi, "%s", "M Kaifa MA109H");
+        break;
+      case 18482692:
+        sprintf(_emi, "%s", "M Kaifa MA109MP");
         break;
       default:
         sprintf(_emi, "%s", "? ??? ???");
